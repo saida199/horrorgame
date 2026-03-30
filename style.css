@@ -1,0 +1,588 @@
+/* ============================================================
+   SHADOWRUN — horror-style.css
+   Esthétique : horreur atmosphérique, noir profond, rouge sang
+   ============================================================ */
+
+:root {
+    --void:       #000000;
+    --deep:       #040408;
+    --dark:       #0a0a0f;
+    --surface:    #12121a;
+    --blood:      #8b0000;
+    --blood-bright: #cc0000;
+    --blood-glow: rgba(139,0,0,0.6);
+    --flesh:      #c0392b;
+    --gore:       #ff2020;
+    --bone:       #d4c5a0;
+    --green-exit: #00ff88;
+    --green-glow: rgba(0,255,136,0.5);
+    --amber:      #ff8c00;
+    --amber-glow: rgba(255,140,0,0.4);
+    --fog:        rgba(180,180,200,0.06);
+
+    --font-horror: 'Creepster', cursive;
+    --font-body:   'Special Elite', cursive;
+}
+
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+html, body { width:100%; height:100%; overflow:hidden; background:var(--void); }
+body { cursor: none; }
+
+/* ── Curseur custom ── */
+.custom-cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    border: 2px solid var(--blood-bright);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform .1s ease, border-color .2s;
+    box-shadow: 0 0 8px var(--blood-glow), inset 0 0 4px rgba(200,0,0,.3);
+    mix-blend-mode: difference;
+}
+.custom-cursor-trail {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--blood-bright);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+    transition: left .08s ease, top .08s ease;
+}
+
+/* ── Grain overlay ── */
+.grain-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 500;
+    opacity: .045;
+    mix-blend-mode: overlay;
+}
+
+/* ── Screens ── */
+.screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.hidden { display: none !important; }
+
+/* ═══════════════════════════════════════
+   ÉCRAN TITRE
+═══════════════════════════════════════ */
+#screenTitle { background: var(--void); overflow: hidden; }
+
+.title-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+/* Brouillard animé */
+.fog-layer {
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(ellipse at center,
+        rgba(60,0,0,.15) 0%,
+        rgba(0,0,0,0) 70%);
+    border-radius: 50%;
+}
+.fog1 { animation: fogDrift 18s ease-in-out infinite alternate; }
+.fog2 { animation: fogDrift 25s ease-in-out infinite alternate-reverse; opacity:.6; }
+.fog3 { animation: fogDrift 32s ease-in-out infinite alternate; opacity:.4;
+         background: radial-gradient(ellipse at 30% 70%, rgba(0,30,60,.12) 0%, transparent 60%); }
+@keyframes fogDrift {
+    0%   { transform: translate(-10%, -5%) scale(1.1) rotate(-2deg); }
+    50%  { transform: translate(5%, 8%) scale(.95) rotate(1deg); }
+    100% { transform: translate(10%, -3%) scale(1.05) rotate(-1deg); }
+}
+
+/* Gouttes de sang */
+.blood-drips {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    pointer-events: none;
+}
+.blood-drop {
+    position: absolute;
+    top: -60px;
+    width: 6px;
+    border-radius: 0 0 50% 50%;
+    background: linear-gradient(to bottom, #6b0000, #cc0000);
+    box-shadow: 0 0 6px rgba(200,0,0,.5);
+    animation: drip linear forwards;
+}
+@keyframes drip {
+    0%   { transform: scaleY(0) translateY(0); opacity:1; }
+    30%  { transform: scaleY(1) translateY(0); opacity:1; }
+    100% { transform: scaleY(1) translateY(100vh); opacity:.3; }
+}
+
+/* Titre contenu */
+.title-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Oeil animé */
+.title-eyeball {
+    width: 120px; height: 120px;
+    cursor: none;
+    margin-bottom: .5rem;
+    filter: drop-shadow(0 0 20px rgba(200,0,0,.7));
+    animation: eyebob 3s ease-in-out infinite;
+}
+@keyframes eyebob {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+}
+.eyeball-white {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #f5f0e8, #d4c9b4);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 4px #1a0000, 0 0 30px rgba(180,0,0,.8), inset 0 -10px 20px rgba(0,0,0,.4);
+}
+.eyeball-iris {
+    position: absolute;
+    width: 50px; height: 50px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #8b0000, #3d0000, #000);
+    transition: transform .12s ease;
+    box-shadow: 0 0 8px rgba(0,0,0,.8);
+}
+.eyeball-pupil {
+    position: absolute;
+    width: 26px; height: 26px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #000;
+    box-shadow: 0 0 6px rgba(255,0,0,.5);
+}
+.eyeball-glint {
+    position: absolute;
+    width: 10px; height: 10px;
+    top: 22%; left: 28%;
+    border-radius: 50%;
+    background: rgba(255,255,255,.9);
+}
+.eyeball-vein {
+    position: absolute;
+    border-radius: 2px;
+    background: rgba(180,0,0,.5);
+    transform-origin: center;
+}
+.v1 { width: 35px; height: 1px; top: 30%; left: 10%; transform: rotate(15deg); }
+.v2 { width: 25px; height: 1px; top: 60%; left: 15%; transform: rotate(-20deg); }
+.v3 { width: 30px; height: 1px; top: 50%; right: 12%; transform: rotate(30deg); }
+
+/* Titre lettres */
+.game-title {
+    font-family: var(--font-horror);
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    color: var(--blood-bright);
+    letter-spacing: 6px;
+    line-height: 1;
+    text-shadow:
+        0 0 20px var(--blood-glow),
+        0 0 60px rgba(139,0,0,.4),
+        3px 3px 0 #000;
+}
+.title-letter {
+    display: inline-block;
+    animation: titleFloat ease-in-out infinite alternate;
+    animation-duration: calc(2s + var(--i) * 0.15s);
+    animation-delay: calc(var(--i) * 0.1s);
+}
+@keyframes titleFloat {
+    from { transform: translateY(0) rotate(0deg); }
+    to   { transform: translateY(-6px) rotate(1deg); }
+}
+.blood-letter { color: #fff; text-shadow: 0 0 20px #fff, 0 0 40px var(--blood-glow); }
+
+.title-sub {
+    font-family: var(--font-body);
+    font-size: clamp(.9rem, 2vw, 1.3rem);
+    color: var(--bone);
+    letter-spacing: 8px;
+    opacity: .8;
+    text-shadow: 0 0 10px rgba(200,180,160,.3);
+}
+.title-lore {
+    font-family: var(--font-body);
+    font-size: .95rem;
+    color: #666;
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 320px;
+    border-left: 2px solid var(--blood);
+    padding-left: 1rem;
+    margin: .5rem 0;
+}
+
+/* Boutons horreur */
+.btn-horror {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    padding: .8rem 2.2rem;
+    border: 2px solid var(--blood);
+    border-radius: 4px;
+    cursor: none;
+    transition: all .25s;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+.btn-horror::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--blood);
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+    z-index: 0;
+}
+.btn-horror:hover::before { transform: translateX(0); }
+.btn-horror span, .btn-horror { position: relative; z-index: 1; }
+
+.btn-play {
+    background: transparent;
+    color: var(--blood-bright);
+    box-shadow: 0 0 20px var(--blood-glow);
+    animation: pulseBtn 2s ease-in-out infinite;
+}
+.btn-play:hover { color: #fff; box-shadow: 0 0 30px var(--blood-glow); }
+
+@keyframes pulseBtn {
+    0%,100% { box-shadow: 0 0 20px var(--blood-glow); }
+    50%      { box-shadow: 0 0 40px var(--blood-glow), 0 0 60px rgba(139,0,0,.3); }
+}
+
+.btn-how {
+    background: transparent;
+    color: #555;
+    border-color: #333;
+}
+.btn-how:hover { color: var(--bone); border-color: #555; }
+
+.title-buttons { display: flex; flex-direction: column; gap: .7rem; align-items: center; }
+
+/* Hint box */
+.hint-box {
+    background: rgba(10,0,0,.8);
+    border: 1px solid var(--blood);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    font-family: var(--font-body);
+    font-size: .9rem;
+    color: var(--bone);
+    text-align: left;
+    max-width: 360px;
+    box-shadow: 0 0 20px var(--blood-glow);
+    animation: fadeInUp .4s ease;
+}
+@keyframes fadeInUp {
+    from { transform: translateY(10px); opacity:0; }
+    to   { transform: translateY(0); opacity:1; }
+}
+
+/* ═══════════════════════════════════════
+   HUD
+═══════════════════════════════════════ */
+.hud {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem 1.5rem;
+    background: linear-gradient(to bottom, rgba(0,0,0,.8), transparent);
+    pointer-events: none;
+}
+.hud-lives { display: flex; gap: .4rem; font-size: 1.3rem; }
+.hud-level {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--bone);
+    letter-spacing: 2px;
+    opacity: .7;
+}
+.hud-score {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--amber);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--amber-glow);
+}
+
+/* Barre de sanité */
+.sanity-bar-wrapper {
+    position: fixed;
+    bottom: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    pointer-events: none;
+}
+.sanity-label {
+    font-family: var(--font-body);
+    font-size: .75rem;
+    color: #555;
+    letter-spacing: 2px;
+}
+.sanity-bar {
+    width: 140px; height: 6px;
+    background: #1a0000;
+    border-radius: 3px;
+    border: 1px solid #330000;
+    overflow: hidden;
+}
+.sanity-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to right, var(--blood), var(--gore));
+    border-radius: 3px;
+    transition: width .5s ease, background .5s;
+    box-shadow: 0 0 6px var(--blood-glow);
+}
+
+/* ═══════════════════════════════════════
+   CANVAS
+═══════════════════════════════════════ */
+#gameCanvas {
+    position: fixed;
+    inset: 0;
+    display: block;
+}
+.light-overlay {
+    position: fixed;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ═══════════════════════════════════════
+   EFFETS DE JEU
+═══════════════════════════════════════ */
+.fear-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(100,0,0,0) 100%);
+    transition: background .5s;
+}
+.fear-vignette.danger {
+    background: radial-gradient(ellipse at center, transparent 20%, rgba(120,0,0,.6) 100%);
+    animation: fearPulse 0.8s ease-in-out infinite;
+}
+@keyframes fearPulse {
+    0%,100% { opacity:.7; }
+    50%     { opacity:1; }
+}
+
+.damage-flash {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(255,0,0,.7) 0%, rgba(100,0,0,.4) 100%);
+    pointer-events: none;
+    z-index: 300;
+    animation: flashOut .6s ease forwards;
+}
+@keyframes flashOut {
+    from { opacity:1; }
+    to   { opacity:0; }
+}
+
+.jumpscare-text {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-horror);
+    font-size: clamp(4rem, 15vw, 10rem);
+    color: var(--gore);
+    text-shadow: 0 0 30px rgba(255,0,0,.8), 0 0 60px rgba(255,0,0,.4);
+    pointer-events: none;
+    z-index: 400;
+    text-align: center;
+    animation: jumpscareAnim .5s ease forwards;
+    white-space: nowrap;
+}
+@keyframes jumpscareAnim {
+    0%  { opacity:0; transform: translate(-50%, -50%) scale(0.3); }
+    30% { opacity:1; transform: translate(-50%, -50%) scale(1.2); }
+    70% { opacity:1; transform: translate(-50%, -50%) scale(1); }
+    100%{ opacity:0; transform: translate(-50%, -50%) scale(1); }
+}
+
+.danger-indicator {
+    position: fixed;
+    top: 4.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: .85rem;
+    color: var(--gore);
+    letter-spacing: 3px;
+    animation: blinkDanger .6s step-end infinite;
+    z-index: 100;
+    text-shadow: 0 0 10px var(--blood-glow);
+    pointer-events: none;
+}
+@keyframes blinkDanger {
+    0%,100% { opacity:1; }
+    50%     { opacity:0; }
+}
+
+/* ═══════════════════════════════════════
+   ÉCRANS GAME OVER & VICTOIRE
+═══════════════════════════════════════ */
+#screenDead { background: var(--void); overflow: hidden; }
+.dead-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #1a0000 0%, #000 100%);
+}
+.dead-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    text-align: center;
+}
+.dead-skull {
+    font-size: 5rem;
+    animation: skullPulse 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(200,0,0,.8));
+}
+@keyframes skullPulse {
+    0%,100% { transform: scale(1) rotate(-3deg); }
+    50%     { transform: scale(1.1) rotate(3deg); }
+}
+.dead-title {
+    font-family: var(--font-horror);
+    font-size: clamp(3rem, 10vw, 6rem);
+    color: var(--gore);
+    text-shadow: 0 0 30px var(--blood-glow), 0 0 60px rgba(200,0,0,.3);
+    animation: deadTitle 3s ease-in-out infinite;
+}
+@keyframes deadTitle {
+    0%,100% { letter-spacing: 6px; }
+    50%     { letter-spacing: 12px; }
+}
+.dead-sub {
+    font-family: var(--font-body);
+    color: #555;
+    font-size: 1.1rem;
+    font-style: italic;
+}
+.dead-score-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .2rem;
+    background: rgba(50,0,0,.4);
+    border: 1px solid var(--blood);
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    font-family: var(--font-body);
+    color: #555;
+    font-size: .9rem;
+}
+.dead-score-value {
+    font-family: var(--font-horror);
+    font-size: 2.5rem;
+    color: var(--gore);
+    text-shadow: 0 0 15px var(--blood-glow);
+}
+.dead-buttons { display: flex; flex-direction: column; gap: .6rem; align-items: center; }
+
+/* Victoire */
+#screenWin { background: var(--void); }
+.win-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #001a08 0%, #000 100%);
+    animation: winPulse 3s ease-in-out infinite;
+}
+@keyframes winPulse {
+    0%,100% { opacity:1; }
+    50%     { opacity:.7; }
+}
+.win-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+.win-icon { font-size: 4rem; animation: doorGlow 2s ease-in-out infinite; }
+@keyframes doorGlow {
+    0%,100% { filter: drop-shadow(0 0 10px var(--green-glow)); }
+    50%     { filter: drop-shadow(0 0 30px var(--green-glow)); }
+}
+.win-title {
+    font-family: var(--font-horror);
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    color: var(--green-exit);
+    text-shadow: 0 0 20px var(--green-glow), 0 0 40px rgba(0,255,136,.2);
+}
+.win-sub { font-family: var(--font-body); color: #555; font-style: italic; }
+.win-score-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .3rem 1.5rem;
+    background: rgba(0,20,10,.4);
+    border: 1px solid #006633;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    font-family: var(--font-body);
+    color: #555;
+    font-size: .9rem;
+    text-align: center;
+}
+.win-score-value, .win-level-value {
+    font-family: var(--font-horror);
+    font-size: 2rem;
+    color: var(--green-exit);
+    text-shadow: 0 0 10px var(--green-glow);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .game-title { font-size: 3rem; letter-spacing: 3px; }
+    .hud { padding: .4rem .8rem; }
+    .sanity-bar { width: 100px; }
+}
