@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHADOWRUN — Survive the Dark</title>
+    <link rel="stylesheet" href="horror-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Curseur custom -->
+    <div class="custom-cursor" id="cursor"></div>
+    <div class="custom-cursor-trail" id="cursorTrail"></div>
+
+    <!-- Bruit de grain sur tout l'écran -->
+    <canvas class="grain-overlay" id="grainCanvas"></canvas>
+
+    <!-- Écran de titre -->
+    <div class="screen" id="screenTitle">
+        <div class="title-bg">
+            <div class="fog-layer fog1"></div>
+            <div class="fog-layer fog2"></div>
+            <div class="fog-layer fog3"></div>
+            <div class="blood-drips" id="bloodDrips"></div>
+        </div>
+        <div class="title-content">
+            <div class="title-eyeball" id="titleEyeball">
+                <div class="eyeball-white">
+                    <div class="eyeball-iris" id="iris">
+                        <div class="eyeball-pupil"></div>
+                        <div class="eyeball-glint"></div>
+                    </div>
+                    <div class="eyeball-vein v1"></div>
+                    <div class="eyeball-vein v2"></div>
+                    <div class="eyeball-vein v3"></div>
+                </div>
+            </div>
+            <h1 class="game-title">
+                <span class="title-letter" style="--i:0">S</span>
+                <span class="title-letter" style="--i:1">H</span>
+                <span class="title-letter" style="--i:2">A</span>
+                <span class="title-letter" style="--i:3">D</span>
+                <span class="title-letter" style="--i:4">O</span>
+                <span class="title-letter" style="--i:5">W</span>
+                <span class="title-letter blood-letter" style="--i:6">R</span>
+                <span class="title-letter" style="--i:7">U</span>
+                <span class="title-letter" style="--i:8">N</span>
+            </h1>
+            <p class="title-sub">SURVIVE THE DARK</p>
+            <p class="title-lore">"Ils ont éteint les lumières.<br>Quelque chose respire dans le noir."</p>
+            <div class="title-buttons">
+                <button class="btn-horror btn-play" id="btnPlay">▶ COMMENCER</button>
+                <button class="btn-horror btn-how" id="btnHow">? COMMENT JOUER</button>
+            </div>
+            <div class="title-controls-hint hidden" id="controlsHint">
+                <div class="hint-box">
+                    <p>🎮 <strong>ZQSD</strong> ou <strong>↑↓←→</strong> pour te déplacer</p>
+                    <p>🔦 Ta lampe torche éclaire un rayon limité autour de toi</p>
+                    <p>👁️ Le monstre te traque. Ne le laisse pas t'attraper.</p>
+                    <p>🚪 Trouve la sortie <span style="color:#00ff88">[ EXIT ]</span> avant qu'il soit trop tard...</p>
+                    <p>❤️ Tu as <strong>3 vies</strong>. Chaque contact te coûte une vie.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran de jeu -->
+    <div class="screen hidden" id="screenGame">
+        <div class="hud">
+            <div class="hud-left">
+                <div class="hud-lives" id="hudLives"></div>
+            </div>
+            <div class="hud-center">
+                <div class="hud-level">NIVEAU <span id="hudLevel">1</span></div>
+            </div>
+            <div class="hud-right">
+                <div class="hud-score">SCORE <span id="hudScore">0</span></div>
+            </div>
+        </div>
+        <!-- Canvas principal -->
+        <canvas id="gameCanvas"></canvas>
+        <!-- Overlay lampe torche (trou noir avec cercle lumineux) -->
+        <canvas id="lightCanvas" class="light-overlay"></canvas>
+        <!-- Overlay vignette peur -->
+        <div class="fear-vignette" id="fearVignette"></div>
+        <!-- Flash de dégât -->
+        <div class="damage-flash hidden" id="damageFlash"></div>
+        <!-- Texte de jumpscare -->
+        <div class="jumpscare-text hidden" id="jumpscareText"></div>
+        <!-- Barre de santé mentale -->
+        <div class="sanity-bar-wrapper">
+            <span class="sanity-label">SANITÉ</span>
+            <div class="sanity-bar"><div class="sanity-fill" id="sanityFill"></div></div>
+        </div>
+        <!-- Indicateur danger -->
+        <div class="danger-indicator hidden" id="dangerIndicator">⚠ IL EST PROCHE</div>
+    </div>
+
+    <!-- Écran Game Over -->
+    <div class="screen hidden" id="screenDead">
+        <div class="dead-bg">
+            <div class="fog-layer fog1"></div>
+            <div class="fog-layer fog2"></div>
+        </div>
+        <div class="dead-content">
+            <div class="dead-skull">💀</div>
+            <h2 class="dead-title">TU ES MORT</h2>
+            <p class="dead-sub" id="deadSub">Il t'a eu...</p>
+            <div class="dead-score-box">
+                <span>Score final</span>
+                <span class="dead-score-value" id="deadScore">0</span>
+            </div>
+            <div class="dead-buttons">
+                <button class="btn-horror btn-play" onclick="Game.restart()">🩸 RÉESSAYER</button>
+                <button class="btn-horror btn-how" onclick="Game.goTitle()">⬅ MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran Victoire -->
+    <div class="screen hidden" id="screenWin">
+        <div class="win-bg"></div>
+        <div class="win-content">
+            <div class="win-icon">🚪</div>
+            <h2 class="win-title">TU AS SURVÉCU</h2>
+            <p class="win-sub">...pour l'instant.</p>
+            <div class="win-score-box">
+                <span>Score</span>
+                <span class="win-score-value" id="winScore">0</span>
+                <span>Niveau</span>
+                <span class="win-level-value" id="winLevel">1</span>
+            </div>
+            <button class="btn-horror btn-play" id="btnNextLevel">➡ NIVEAU SUIVANT</button>
+            <button class="btn-horror btn-how" onclick="Game.goTitle()" style="margin-top:.5rem">⬅ MENU</button>
+        </div>
+    </div>
+
+    <script src="horror-game.js"></script>
+</body>
+</html>
